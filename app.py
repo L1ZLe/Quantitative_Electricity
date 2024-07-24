@@ -101,7 +101,7 @@ def data_exploration():
     st.pyplot(fig_1)
     
     # Second dataset: Net generation by places
-    data_2 = pd.read_csv(r"C:\Users\Sami El yaagoubi\Desktop\capstone\datasets\Net_generation_by places.csv")
+    data_2 = pd.read_csv(r"datasets/Net_generation_by places.csv")
     
     # Display the raw data
     st.write("### Net electricity generation by places")
@@ -137,8 +137,7 @@ def data_exploration():
 
     st.pyplot(fig_2)
 
-    file_path_3 = "datasets\Retail_sales_of_electricity_United_States_monthly.csv"
-    data_3 = pd.read_csv(file_path_3)
+    data_3 = pd.read_csv(r"datasets/Retail_sales_of_electricity_United_States_monthly.csv")
     
     # Display the raw data
     st.write("### Retail sales of electricity")
@@ -175,23 +174,23 @@ def data_exploration():
     st.pyplot(fig_3)
 
     st.subheader('Correlations between variables:')
-    st.image("assets\Correlations between variables1.png")
-    st.image("assets\Correlations between variables2.png")
+    st.image(r'assets/Correlations between variables1.png')
+    st.image(r'assets/Correlations between variables2.png')
 
     st.subheader("Relation between Electricity price and Temperature")
-    st.image("assets\Relation between Electricity price and Temperature.png")
+    st.image(r"assets/Relation between Electricity price and Temperature.png")
 
     st.subheader("Net_generated electricity in United States")
-    st.image(r"assets\Net_generated electricity and Temperature.png")
+    st.image(r"assets/Net_generated electricity and Temperature.png")
 
     st.subheader("Average Electricity price by Month")
-    st.image("assets\Average Electricity price by Month.png")
+    st.image(r"assets/Average Electricity price by Month.png")
 
     st.subheader("Electricity seasonal decomposition")
-    st.image("assets\Electricity seasonal decomposition.png")
+    st.image(r"assets/Electricity seasonal decomposition.png")
 
     st.subheader("Natural Gas seasonal decomposition")
-    st.image(r"assets\Natural Gas seasonal decomposition.png")
+    st.image(r"assets/Natural Gas seasonal decomposition.png")
 
     st.title("Electricity and Natural Gas Data")
     st.write("Here is a preview of the dataset:")

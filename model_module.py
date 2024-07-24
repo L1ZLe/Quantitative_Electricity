@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 
 def load_dataset():
-    AllInOne_Data = pd.read_csv(r"C:\Users\Sami El yaagoubi\Desktop\capstone\datasets\Data_cleaned_Dataset.csv", parse_dates=['Trade Date', 'Electricity: Delivery Start Date', 'Electricity: Delivery End Date'])
+    AllInOne_Data = pd.read_csv(r"datasets/Data_cleaned_Dataset.csv", parse_dates=['Trade Date', 'Electricity: Delivery Start Date', 'Electricity: Delivery End Date'])
 
 # Interpolate missing data
     AllInOne_Data = AllInOne_Data.interpolate()
