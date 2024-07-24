@@ -360,7 +360,7 @@ def models_overview():
         - To offer a straightforward approach to predicting price direction based on linear relationships.
         - Used the direction of lagged prices as a variable to predict the direction of the next day's price.
     """)
-    st.image("assets\LinearRegression.png")
+    st.image(r"assets/LinearRegression.png")
     st.write("""
     - **Random Forest**: 
       An ensemble learning method using multiple decision trees to improve prediction accuracy.
