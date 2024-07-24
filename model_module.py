@@ -9,6 +9,7 @@ from sklearn.model_selection import train_test_split
 from statsmodels.tsa.arima.model import ARIMA
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
 
 
 def load_dataset():
@@ -98,8 +99,8 @@ def calculate_metrics(model_name, df):
 
         df_returns['AlgoReturn'] = df_returns['Position'] * df_returns['target']
         daily_return = df_returns['AlgoReturn'].dropna()
-        sharpe_ratio = daily_return.mean() / daily_return.std() * np.sqrt(252)
-
+        st.write("Table of Returns: ")
+        st.write(df_returns)
         metrics = {
             "Training dataset R^2": model.score(X_train, y_train),
             "Testing dataset R^2": model.score(X_test, y_test),
@@ -107,7 +108,7 @@ def calculate_metrics(model_name, df):
             "Testing dataset accuracy": np.mean(np.sign(Ptest) == np.sign(y_test)) * 100,
             "Training dataset ROI": df_returns.iloc[train_start:train_start+len(Ptrain)]['AlgoReturn'].sum() * 100,
             "Testing dataset ROI": df_returns.iloc[test_start:test_start+len(Ptest)]['AlgoReturn'].sum() * 100,
-            "Sharpe Ratio": sharpe_ratio
+            "Sharpe Ratio": daily_return.mean() / daily_return.std() * np.sqrt(252)
         }
         descriptions = descriptions_others
         
@@ -145,7 +146,8 @@ def calculate_metrics(model_name, df):
         df_returns['AlgoReturn'] = df_returns['Position'] * df_returns['target']
         daily_return = df_returns['AlgoReturn'].dropna()
         sharpe_ratio = daily_return.mean() / daily_return.std() * np.sqrt(252)
-
+        st.write("Table of Returns: ")
+        st.write(df_returns)
         metrics = {
             "Training dataset R^2": model.score(X_train,Ctrain),
             "Testing dataset R^2": model.score(X_test,Ctest),
@@ -203,6 +205,7 @@ def calculate_metrics(model_name, df):
 
         # Create a DataFrame to simulate returns
         df_returns = pd.DataFrame({
+            'Electricity: Wtd Avg Price $/MWh': df[['Electricity: Wtd Avg Price $/MWh']].values[sequence_length:].squeeze(),
             'target': df['Returns'].values[sequence_length:],  # Ensure alignment with sequences
             'Position': np.nan
         })
@@ -223,7 +226,8 @@ def calculate_metrics(model_name, df):
         testing_loss = model.evaluate(X_test, y_test, verbose=0)[0]
         training_mae = mean_absolute_error(y_train, Ptrain_binary)
         testing_mae = mean_absolute_error(y_test, Ptest_binary)
-
+        st.write("Table of Returns: ")
+        st.write(df_returns)
         # Collect all metrics
         metrics = {
             "Training dataset accuracy": model.evaluate(X_train, y_train, verbose=0)[1],
@@ -291,6 +295,7 @@ def calculate_metrics(model_name, df):
 
         # Create a DataFrame to simulate returns
         df_returns = pd.DataFrame({
+            'Electricity: Wtd Avg Price $/MWh': df[['Electricity: Wtd Avg Price $/MWh']].values[sequence_length:].squeeze(),
             'target': df['Returns'].values[sequence_length:],  # Ensure alignment with sequences
             'Position': np.nan
         })
@@ -311,7 +316,8 @@ def calculate_metrics(model_name, df):
         testing_loss = model.evaluate(X_test, y_test, verbose=0)[0]
         training_mae = mean_absolute_error(y_train, Ptrain_binary)
         testing_mae = mean_absolute_error(y_test, Ptest_binary)
-
+        st.write("Table of Returns: ")
+        st.write(df_returns)
         # Collect all metrics
         metrics = {
             "Training dataset accuracy": model.evaluate(X_train, y_train, verbose=0)[1],
@@ -331,9 +337,9 @@ def calculate_metrics(model_name, df):
         # Print metrics and their descriptions in a table
         descriptions = descriptions_classification
     elif (model_name == 'price_ARIMA_model.pkl'):
-        df=df[['Electricity: High Price $/MWh']]
+        df = df[['Electricity: Wtd Avg Price $/MWh']]
         model = load_models(model_name)
-        test_size = int(len(df) * 0.01)
+        test_size = int(len(df) * 0.001)
 
         train_data = df[:-test_size]
         test_data = df[-test_size:]
@@ -343,11 +349,24 @@ def calculate_metrics(model_name, df):
         for t in range(len(test_data)):
             # Forecast the next day
             model = ARIMA(train_data, order=(model.model_orders['ar'], model.model_orders['trend'], model.model_orders['ma'])).fit()
-            forecast = model.forecast(steps=1)
-            predictions.append(forecast)
+            forecast = model.get_forecast(steps=1)
+            
+            
+            if not forecast.predicted_mean.empty:
+                predicted_value = forecast.predicted_mean.iloc[0]
+                predictions.append(predicted_value)
+            else:
+                st.write("Forecast is empty, unable to retrieve predicted value.")
+            
             # Update training data with the new observed value
             train_data = pd.concat([train_data, test_data.iloc[t:t+1]])
 
+        
+        analyze_predictions(
+            test_data.squeeze().shift(1).fillna(train_data['Electricity: Wtd Avg Price $/MWh'].iloc[-test_size-1]),
+            test_data.squeeze().fillna(0),
+            predictions
+        )
         # Collect all metrics
         metrics = {
             "Mean Absolute Error": np.mean(np.abs(np.array(predictions) - test_data.values)),
@@ -356,7 +375,7 @@ def calculate_metrics(model_name, df):
         }
         descriptions=descriptions_RMSE_MAE_MSE
     elif (model_name == 'price_gru_model.h5'):
-        df = df[['Electricity: High Price $/MWh']]
+        df = df[['Electricity: Wtd Avg Price $/MWh']]
         model = load_models(model_name)
         tf.random.set_seed(7)
         # Split into train and test sets
@@ -376,7 +395,9 @@ def calculate_metrics(model_name, df):
         X_test = np.reshape(X_test, (X_test.shape[0], 1, X_test.shape[1]))
         # Generate predictions from the best model
         predictions = model.predict(X_test)
-
+        
+        
+        analyze_predictions(X_test.flatten(), y_test.flatten(), predictions.flatten())
         # Collect all metrics
         metrics = {
             "Mean Absolute Error": mean_absolute_error(y_test, predictions),
@@ -386,7 +407,7 @@ def calculate_metrics(model_name, df):
         descriptions=descriptions_RMSE_MAE_MSE
     elif (model_name == 'price_lstm_model.h5'):
         model = load_models(model_name)
-        df = df[['Electricity: High Price $/MWh']]
+        df = df[['Electricity: Wtd Avg Price $/MWh']]
         # Set seed for reproducibility
         tf.random.set_seed(7)
 
@@ -407,7 +428,18 @@ def calculate_metrics(model_name, df):
         X_test, y_test = create_sequences(test,test, seq_length)
         # Make predictions
         y_pred = model.predict(X_test)
+        # Flatten the arrays and ensure they have the same length
+        X_test_flat = X_test.flatten()
+        y_test_flat = y_test.flatten()
+        y_pred_flat = y_pred.flatten()
 
+        min_length = min(len(X_test_flat), len(y_test_flat), len(y_pred_flat))
+        X_test_flat = X_test_flat[:min_length]
+        y_test_flat = y_test_flat[:min_length]
+        y_pred_flat = y_pred_flat[:min_length]
+
+        # Call the analyze_predictions function
+        analyze_predictions(X_test_flat, y_test_flat, y_pred_flat)
         metrics = {
             "Mean Absolute Error": mean_absolute_error(y_test, y_pred),
             "Root Mean Squared Error": np.sqrt(mean_squared_error(y_test, y_pred)),
@@ -417,20 +449,33 @@ def calculate_metrics(model_name, df):
 
     return metrics, descriptions
 
-def create_sequences(data, target, sequence_length):
-            xs, ys = [], []
-            for i in range(len(data) - sequence_length):
-                x = data[i:i + sequence_length]
-                y = target[i + sequence_length]
-                xs.append(x)
-                ys.append(y)
-            return np.array(xs), np.array(ys)
-
-def create_sequences(data, seq_length):
-    sequences = []
-    for i in range(len(data) - seq_length + 1):
-        sequences.append(data[i:i + seq_length])
-    return np.array(sequences)
+def create_sequences(data, target=None, sequence_length=1):
+    """
+    Creates sequences from data with optional target array.
+    
+    Parameters:
+    - data: Input data array.
+    - target: Optional target array. If provided, the function creates supervised sequences.
+    - sequence_length: Length of each sequence.
+    
+    Returns:
+    - Sequences as numpy arrays. If target is provided, returns (X, y) arrays.
+    """
+    xs, ys = [], []
+    
+    for i in range(len(data) - sequence_length):
+        x = data[i:i + sequence_length]
+        if target is not None:
+            y = target[i + sequence_length]
+            xs.append(x)
+            ys.append(y)
+        else:
+            xs.append(x)
+    
+    if target is not None:
+        return np.array(xs), np.array(ys)
+    else:
+        return np.array(xs)
 
 def prepare_input_for_prediction(inputs, model_file):
     AllInOne_Data = load_dataset()[['Electricity: Wtd Avg Price $/MWh']]
@@ -455,3 +500,59 @@ def prepare_input_for_prediction(inputs, model_file):
         X_test = AllInOne_Data['Electricity: Wtd Avg Price $/MWh'].values.flatten()
         
         return X_test, None
+
+def analyze_predictions(X_test, y_test, predictions):
+    # Convert test_data to a Series (1-dimensional) before creating the DataFrame
+    data = pd.DataFrame({
+        'X_test': X_test,
+        'y_test': y_test,
+        'predictions': predictions
+    })
+    data['position'] = 0
+    
+    for i in range(len(data)):
+        if data['X_test'].iloc[i] < data['predictions'].iloc[i]:
+            data['position'].iloc[i] = 1
+        elif data['X_test'].iloc[i] > data['predictions'].iloc[i]:
+            data['position'].iloc[i] = -1
+        else:
+            data['position'].iloc[i] = 0
+
+    # Initialize the 'returns' and 'correct' columns
+    data['returns'] = None
+    data['correct'] = None
+
+    # Main loop to calculate 'correct' values
+    for i in range(len(data)):
+        row_index = data.index[i]  # Get the actual index label for the current row
+
+        if data['position'][row_index] == 1:  # Long position
+            if data['X_test'][row_index] < data['y_test'][row_index]:  # Market went up
+                if data['y_test'][row_index] > data['predictions'][row_index]:
+                    data.at[row_index, 'correct'] = 1  # Prediction lower than actual
+                else:
+                    data.at[row_index, 'correct'] = 0  # Prediction higher than actual
+            else:
+                data.at[row_index, 'correct'] = -1  # Market went down, wrong position
+
+        elif data['position'][row_index] == -1:  # Short position
+            if data['X_test'][row_index] > data['y_test'][row_index]:  # Market went down
+                if data['y_test'][row_index] < data['predictions'][row_index]:
+                    data.at[row_index, 'correct'] = 1  # Prediction higher than actual
+                else:
+                    data.at[row_index, 'correct'] = 0  # Prediction lower than actual
+            else:
+                data.at[row_index, 'correct'] = -1  # Market went up, wrong position
+
+    # Iterate over the actual index of the DataFrame for returns calculation
+    for index in data.index:
+        if data.loc[index, 'correct'] == 1:
+            data.loc[index, 'returns'] = abs((data.loc[index, 'predictions'] - data.loc[index, 'X_test']) / data.loc[index, 'X_test'])
+        elif data.loc[index, 'correct'] == 0:
+            data.loc[index, 'returns'] = abs((data.loc[index, 'y_test'] - data.loc[index, 'X_test']) / data.loc[index, 'X_test'])
+        elif data.loc[index, 'correct'] == -1:
+            data.loc[index, 'returns'] = abs((data.loc[index, 'y_test'] - data.loc[index, 'X_test']) / data.loc[index, 'X_test']) * (-1)
+    st.write(data)
+    # Streamlit output
+    st.write(f'The Win rate is: {len(data[data["correct"].isin([1,0])])/int(len(data))*100:.2f}%')
+    st.write(f'The ROI is: {data["returns"].sum()*100:.2f}%')

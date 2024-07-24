@@ -692,27 +692,6 @@ def predictions():
             else:
                 st.write("Please enter all required data for the selected model.")
 
-def trading_strategies():
-    AllInOne_Data = load_dataset()
-    st.title("Trading Strategies")
-    st.write("Explain and visualize trading strategies.")
-
-    strategies = ["", ""]
-    selected_strategy = st.selectbox("Select a strategy", strategies)
-
-    if selected_strategy:
-        st.write(f"Logic for {selected_strategy}:")
-        st.write(strategy_description(selected_strategy))
-
-        st.write("Flowchart/Diagrams:")
-        # You can add code to visualize flowcharts or diagrams
-
-        st.write("Performance Metrics:")
-        #performance_metrics = backtest(selected_strategy, AllInOne_Data)
-        #st.write(performance_metrics)
-
-        st.write("Equity Curve:")
-        plot_equity_curve(selected_strategy, AllInOne_Data)
 
 def backtesting():
     AllInOne_Data = load_dataset()
@@ -822,7 +801,6 @@ PAGES = {
     "Models Overview": models_overview,
     "Model Selection": model_selection,
     "Predictions": predictions,
-    "Trading Strategies": trading_strategies,
     "Backtesting": backtesting,
     "Export Results": export_results,
     'Contact Us': contact
