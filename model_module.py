@@ -449,33 +449,23 @@ def calculate_metrics(model_name, df):
 
     return metrics, descriptions
 
-def create_sequences(data, target=None, sequence_length=1):
-    """
-    Creates sequences from data with optional target array.
-    
-    Parameters:
-    - data: Input data array.
-    - target: Optional target array. If provided, the function creates supervised sequences.
-    - sequence_length: Length of each sequence.
-    
-    Returns:
-    - Sequences as numpy arrays. If target is provided, returns (X, y) arrays.
-    """
-    xs, ys = [], []
-    
-    for i in range(len(data) - sequence_length):
-        x = data[i:i + sequence_length]
-        if target is not None:
-            y = target[i + sequence_length]
-            xs.append(x)
-            ys.append(y)
-        else:
-            xs.append(x)
-    
-    if target is not None:
-        return np.array(xs), np.array(ys)
-    else:
-        return np.array(xs)
+
+
+
+def create_sequences(data, target, sequence_length):
+            xs, ys = [], []
+            for i in range(len(data) - sequence_length):
+                x = data[i:i + sequence_length]
+                y = target[i + sequence_length]
+                xs.append(x)
+                ys.append(y)
+            return np.array(xs), np.array(ys)
+
+def create_sequences_2(data, seq_length):
+    sequences = []
+    for i in range(len(data) - seq_length + 1):
+        sequences.append(data[i:i + seq_length])
+    return np.array(sequences)
 
 def prepare_input_for_prediction(inputs, model_file):
     AllInOne_Data = load_dataset()[['Electricity: Wtd Avg Price $/MWh']]
@@ -487,7 +477,7 @@ def prepare_input_for_prediction(inputs, model_file):
         AllInOne_Data['price_scaled'] = scaler.transform(AllInOne_Data[['Electricity: Wtd Avg Price $/MWh']])
         
         if model_file == "price_lstm_model.h5":
-            latest_sequence = create_sequences(AllInOne_Data['price_scaled'].values, 1)
+            latest_sequence = create_sequences_2(AllInOne_Data['price_scaled'].values, 1)
             X_test = latest_sequence[-1].reshape((1, 1, 1))
         else:  # for "price_gru_model.h5"
             X_test = AllInOne_Data['price_scaled'].values[-1].reshape((1, 1, 1))

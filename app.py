@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 from model_module import calculate_metrics, load_models, prepare_input_for_prediction, load_dataset
 from trading_strategies import run_percentile_strategy, run_BOS_strategy,strategy_description
-from visualizations import plot_equity_curve, display_inputs
+from visualizations import display_inputs
 
 
 # Model names for price prediction
@@ -746,7 +746,6 @@ def contact():
     import openpyxl
 
     st.title("Contact Us")
-    st.write("User feedback form.")
     dotenv_path = find_dotenv()
     load_dotenv(dotenv_path)
 

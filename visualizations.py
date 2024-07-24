@@ -2,27 +2,6 @@ import matplotlib.pyplot as plt
 import streamlit as st
 import numpy as np
 
-def plot_predictions(model_name, data):
-    st.write(f"Plotting predictions for {model_name}")
-    # Placeholder code to plot predictions
-    plt.plot(data)
-    plt.title(f"Predictions vs Actuals for {model_name}")
-    st.pyplot()
-
-def plot_equity_curve(strategy_name, data):
-    st.write(f"Plotting equity curve for {strategy_name}")
-    # Placeholder code to plot equity curve
-    plt.plot(data)
-    plt.title(f"Equity Curve for {strategy_name}")
-    st.pyplot()
-
-def plot_trades(trades):
-    st.write("Plotting individual trades")
-    # Placeholder code to plot trades
-    plt.plot(trades['Date'], trades['Profit/Loss'])
-    plt.title("Individual Trades")
-    st.pyplot()
-
 def waiting_statement():
     st.write("Running backtest, please wait...")
     
