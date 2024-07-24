@@ -1,0 +1,14 @@
+streamlit
+pandas
+numpy
+matplotlib
+scikit-learn
+joblib
+tensorflow
+keras
+statsmodels
+pmdarima
+plotly
+pykalman
+keras-tuner
+arch
