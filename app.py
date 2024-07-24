@@ -716,6 +716,8 @@ def backtesting():
         export_results()
 
 def export_results():
+    import io
+
     if 'backtest_results' in st.session_state and 'strategy_name' in st.session_state:
         backtest_results = st.session_state['backtest_results']
         strategy_name = st.session_state['strategy_name']
@@ -728,11 +730,32 @@ def export_results():
 
         if st.button("Export"):
             if export_format == "CSV":
-                backtest_results.to_csv(f'{strategy_name}_backtest_results.csv')
-                st.write("Results exported to CSV.")
+                csv_data = backtest_results.to_csv(index=False).encode('utf-8')
+                st.download_button(
+                    label="Download CSV",
+                    data=csv_data,
+                    file_name=f'{strategy_name}_backtest_results.csv',
+                    mime='text/csv'
+                )
+                st.write("Results ready to download as CSV.")
             elif export_format == "Excel":
-                backtest_results.to_excel(f'{strategy_name}_backtest_results.xlsx')
-                st.write("Results exported to Excel.")
+                # Create a BytesIO buffer
+                buffer = io.BytesIO()
+                
+                # Write DataFrame to the buffer
+                with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
+                    backtest_results.to_excel(writer, index=False, sheet_name='Sheet1')
+                
+                # Retrieve the buffer value
+                excel_data = buffer.getvalue()
+                
+                st.download_button(
+                    label="Download Excel",
+                    data=excel_data,
+                    file_name=f'{strategy_name}_backtest_results.xlsx',
+                    mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                )
+                st.write("Results ready to download as Excel.")
     else:
         st.title("No results available for export. Please run a backtest first.")
 
