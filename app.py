@@ -660,7 +660,7 @@ def predictions():
                       lower_bound, upper_bound = conf_int[0]
                       
                       st.write("The predicted price for the next day is: ${:.2f}".format(prediction))
-                      st.write("95% confidence interval: ${:.2f} - ${:.2f}".format(lower_bound, upper_bound))
+                      st.write("95% confidence interval: ${:.2f} and ${:.2f}".format(lower_bound, upper_bound))
                     elif model_file == "price_gru_model.h5" or model_file == "price_lstm_model.h5":
                       inputs, scaler = prepare_input_for_prediction(inputs, model_file)
 
