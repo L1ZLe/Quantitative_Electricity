@@ -171,7 +171,6 @@ streamlit run app.py
 
 Contributions are welcome! Here are several ways you can contribute:
 
-- **[Submit Pull Requests](https://github.com/L1ZLe/Quantative_Electricity/blob/main/CONTRIBUTING.md)**: Review open PRs, and submit your own PRs.
 - **[Join the Discussions](https://github.com/L1ZLe/Quantative_Electricity/discussions)**: Share your insights, provide feedback, or ask questions.
 - **[Report Issues](https://github.com/L1ZLe/Quantative_Electricity/issues)**: Submit bugs found or log feature requests for Quantative_Electricity.
 
@@ -212,12 +211,10 @@ This project is protected under the [MIT License](https://choosealicense.com/lic
 
 ## 👏 Acknowledgments
 
-- **[Pandas](
-
-https://pandas.pydata.org/)**: For providing the data manipulation tools.
+- **[Pandas](https://pandas.pydata.org/)**: For providing the data manipulation tools.
 - **[TensorFlow](https://www.tensorflow.org/)**: For enabling deep learning models.
 - **[Streamlit](https://streamlit.io/)**: For allowing easy deployment of the web application.
-- **[TradingView](https://www.tradingview.com/)**: For providing insights into electricity futures.
+- **[eia.gov](https://www.eia.gov/)**: For providing insights into electricity futures.
 
 ---
 
