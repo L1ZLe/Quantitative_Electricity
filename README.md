@@ -1,4 +1,3 @@
-
 <p align="center">
   <img src="https://cdn-icons-png.flaticon.com/512/6295/6295417.png" width="100" />
 </p>
@@ -9,10 +8,10 @@
     <em><code>► An advanced platform for forecasting electricity prices and developing trading strategies.</code></em>
 </p>
 <p align="center">
-	<img src="https://img.shields.io/github/license/L1ZLe/Quantative_Electricity?style=flat&color=0080ff" alt="license">
-	<img src="https://img.shields.io/github/last-commit/L1ZLe/Quantative_Electricity?style=flat&logo=git&logoColor=white&color=0080ff" alt="last-commit">
-	<img src="https://img.shields.io/github/languages/top/L1ZLe/Quantative_Electricity?style=flat&color=0080ff" alt="repo-top-language">
-	<img src="https://img.shields.io/github/languages/count/L1ZLe/Quantative_Electricity?style=flat&color=0080ff" alt="repo-language-count">
+	<img src="https://img.shields.io/github/license/L1ZLe/Quantitative_Electricity?style=flat&color=0080ff" alt="license">
+	<img src="https://img.shields.io/github/last-commit/L1ZLe/Quantitative_Electricity?style=flat&logo=git&logoColor=white&color=0080ff" alt="last-commit">
+	<img src="https://img.shields.io/github/languages/top/L1ZLe/Quantitative_Electricity?style=flat&color=0080ff" alt="repo-top-language">
+	<img src="https://img.shields.io/github/languages/count/L1ZLe/Quantitative_Electricity?style=flat&color=0080ff" alt="repo-language-count">
 <p>
 <p align="center">
 		<em>Developed with the software and tools below.</em>
@@ -29,7 +28,7 @@
 > - [📂 Repository Structure](#-repository-structure)
 > - [🧩 Modules](#-modules)
 > - [⚙️ Installation](#️-installation)
-> - [🤖 Running Quantative_Electricity](#-running-Quantative_Electricity)
+> - [🤖 Running Quantitative_Electricity](#-running-Quantitative_Electricity)
 > - [🛠 Project Roadmap](#-project-roadmap)
 > - [🤝 Contributing](#-contributing)
 > - [📄 License](#-license)
@@ -55,13 +54,12 @@
 - **Backtesting**: Assess the performance of strategies on historical data.
 - **Risk Management**: Techniques and tools for adjusting strategy parameters.
 
-
 ---
 
 ## 📂 Repository Structure
 
 ```sh
-└── Quantative_Electricity/
+└── Quantitative_Electricity/
     ├── README.md
     ├── app.py
     ├── assets
@@ -107,10 +105,10 @@
 
 | File                                                                                                       | Summary                         |
 | ---                                                                                                        | ---                             |
-| [model_module.py](https://github.com/L1ZLe/Quantative_Electricity/blob/master/model_module.py)             | <code>► Contains functions for model training and predictions.</code> |
-| [visualizations.py](https://github.com/L1ZLe/Quantative_Electricity/blob/master/visualizations.py)         | <code>► Generates interactive visualizations for data exploration.</code> |
-| [trading_strategies.py](https://github.com/L1ZLe/Quantative_Electricity/blob/master/trading_strategies.py) | <code>► Implements various trading strategies based on predictions.</code> |
-| [app.py](https://github.com/L1ZLe/Quantative_Electricity/blob/master/app.py)                               | <code>► Main entry point for running the Streamlit application.</code> |
+| [model_module.py](https://github.com/L1ZLe/Quantitative_Electricity/blob/master/model_module.py)             | <code>► Contains functions for model training and predictions.</code> |
+| [visualizations.py](https://github.com/L1ZLe/Quantitative_Electricity/blob/master/visualizations.py)         | <code>► Generates interactive visualizations for data exploration.</code> |
+| [trading_strategies.py](https://github.com/L1ZLe/Quantitative_Electricity/blob/master/trading_strategies.py) | <code>► Implements various trading strategies based on predictions.</code> |
+| [app.py](https://github.com/L1ZLe/Quantitative_Electricity/blob/master/app.py)                               | <code>► Main entry point for running the Streamlit application.</code> |
 
 </details>
 
@@ -118,16 +116,16 @@
 
 ### ⚙️ Installation
 
-1. Clone the Quantative_Electricity repository:
+1. Clone the Quantitative_Electricity repository:
 
 ```sh
-git clone https://github.com/L1ZLe/Quantative_Electricity
+git clone https://github.com/L1ZLe/Quantitative_Electricity
 ```
 
 2. Change to the project directory:
 
 ```sh
-cd Quantative_Electricity
+cd Quantitative_Electricity
 ```
 
 3. Install the dependencies:
@@ -136,14 +134,13 @@ cd Quantative_Electricity
 pip install -r requirements.txt
 ```
 
-### 🤖 Running Quantative_Electricity
+### 🤖 Running Quantitative_Electricity
 
-Use the following command to run Quantative_Electricity:
+Use the following command to run Quantitative_Electricity:
 
 ```sh
 streamlit run app.py
 ```
-
 
 ---
 
@@ -160,8 +157,8 @@ streamlit run app.py
 
 Contributions are welcome! Here are several ways you can contribute:
 
-- **[Join the Discussions](https://github.com/L1ZLe/Quantative_Electricity/discussions)**: Share your insights, provide feedback, or ask questions.
-- **[Report Issues](https://github.com/L1ZLe/Quantative_Electricity/issues)**: Submit bugs found or log feature requests for Quantative_Electricity.
+- **[Join the Discussions](https://github.com/L1ZLe/Quantitative_Electricity/discussions)**: Share your insights, provide feedback, or ask questions.
+- **[Report Issues](https://github.com/L1ZLe/Quantitative_Electricity/issues)**: Submit bugs found or log feature requests for Quantitative_Electricity.
 
 <details closed>
     <summary>Contributing Guidelines</summary>
@@ -169,7 +166,7 @@ Contributions are welcome! Here are several ways you can contribute:
 1. **Fork the Repository**: Start by forking the project repository to your GitHub account.
 2. **Clone Locally**: Clone the forked repository to your local machine using a Git client.
    ```sh
-   git clone https://github.com/L1ZLe/Quantative_Electricity
+   git clone https://github.com/L1ZLe/Quantitative_Electricity
    ```
 3. **Create a New Branch**: Always work on a new branch, giving it a descriptive name.
    ```sh
@@ -208,5 +205,6 @@ This project is protected under the [MIT License](https://choosealicense.com/lic
 ---
 
 <p align="center">
-  <em>Thank you for exploring Quantative_Electricity. We hope you find it valuable for your trading strategy development!</em>
+  <em>Thank you for exploring Quantitative_Electricity. We hope you find it valuable for your trading strategy development!</em>
 </p>
+```
