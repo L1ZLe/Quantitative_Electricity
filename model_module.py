@@ -345,7 +345,7 @@ def calculate_metrics(model_name, df):
         test_data = df[-test_size:]
 
         predictions = []
-        waiting_statement()
+
         for t in range(len(test_data)):
             # Forecast the next day
             model = ARIMA(train_data, order=(model.model_orders['ar'], model.model_orders['trend'], model.model_orders['ma'])).fit()
