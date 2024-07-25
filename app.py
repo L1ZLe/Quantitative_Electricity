@@ -32,13 +32,11 @@ def home():
     Welcome to the Electricity Trading Strategy Project website! This platform showcases the work done in analyzing and developing trading strategies for the electricity market. Here's what you can explore:
     """)
 
-    # Project Overview
     st.header("Project Overview")
     st.write("""
     This project aims to forecast electricity prices in the USA, specifically the PJM Interconnection, and develop trading strategies based on these forecasts and other known strategies. We employ advanced machine learning models such as SARIMA and GRU to predict price movements and create a robust trading strategy. The models will be evaluated based on their accuracy in predicting the direction of the next day's price and the accuracy of the predicted prices.
     """)
 
-    # Key Features
     st.header("Key Features")
     st.write("""
     - **Model Overview**: Detailed explanations of the models used for price predictions.
@@ -50,7 +48,6 @@ def home():
     - **Risk Management**: Discussion on risk management techniques and tools to adjust strategy parameters.
     """)
 
-    # Model Evaluation
     st.header("Model Evaluation")
     st.write("""
     We evaluate our models using two main criteria:
@@ -62,32 +59,25 @@ def data_exploration():
     from sklearn.preprocessing import MinMaxScaler
     import seaborn as sns
 
-    # First dataset: Net electricity generation by source
     data_1 = pd.read_csv('datasets/Net_generation_United_States_all_sectors_monthly.csv')
     st.title("Data Exploration")
     
-    # Display the raw data
     st.write("### Net electricity generation by source")
     st.write(data_1)
 
-    # Convert 'Month' column to datetime format
     try:
         data_1['Month'] = pd.to_datetime(data_1['Month'], format='%b-%y', errors='coerce')
     except ValueError:
         st.error("Error parsing dates in the first dataset. Please check the date format in the CSV file.")
         st.stop()
 
-    # Drop rows with invalid dates
     data_1 = data_1.dropna(subset=['Month'])
 
-    # Select multiple sources to plot
     sources_1 = list(data_1.columns[1:])  # Assuming the first column is the date or time
     selected_sources_1 = st.multiselect("Select sources to plot from the first dataset", options=sources_1, default=sources_1)
 
-    # Filter data for the selected sources
     plot_data_1 = data_1[['Month'] + selected_sources_1].dropna()
 
-    # Plot the data
     fig_1, ax_1 = plt.subplots()
     for source in selected_sources_1:
         ax_1.plot(plot_data_1['Month'], plot_data_1[source], label=source)
@@ -273,7 +263,6 @@ def data_exploration():
         st.write("Please select a variable to plot.")
 
 
-            # New graph for non-linear relationships
     st.write("### Non-Linear Relationships Between Variables")
     # User selects two variables to plot
     variable_x = st.selectbox("Select variable for x-axis", options=types)
@@ -772,14 +761,12 @@ def contact():
     load_dotenv(dotenv_path)
 
     def send_email(name, email, message):
-        # Email details
         
         from_email = os.getenv('EMAIL')
         from_password = os.getenv('EMAIL_PASSWORD')
         to_email = os.getenv('EMAIL')
 
 
-        # Create the email content
         msg = MIMEMultipart()
         msg['From'] = from_email
         msg['To'] = to_email
