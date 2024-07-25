@@ -52,7 +52,6 @@
 - **Trading Strategy**: Insights into the logic and implementation of trading strategies.
 - **Performance Metrics**: Evaluation of strategies using metrics such as Sharpe ratio, ROI, and more.
 - **Backtesting**: Assess the performance of strategies on historical data.
-- **Risk Management**: Techniques and tools for adjusting strategy parameters.
 
 ---
 
