@@ -47,15 +47,16 @@
 
 ## 📦 Features
 
-<code>► Explore a range of features designed to enhance your trading strategy:
+► Explore a range of features designed to enhance your trading strategy:
 
 - **Model Overview**: Detailed descriptions of the models used for forecasting electricity prices.
 - **Data Exploration**: Interactive visualizations of historical electricity prices and influencing factors.
 - **Predictions**: Live forecasts of next-day electricity prices using various models.
 - **Trading Strategy**: Insights into the logic and implementation of trading strategies.
-- **Performance Metrics**: Evaluation of strategies using metrics like Sharpe ratio, ROI, and more.
-- **Backtesting**: Assess strategy performance on historical data.
-- **Risk Management**: Techniques and tools for adjusting strategy parameters.</code>
+- **Performance Metrics**: Evaluation of strategies using metrics such as Sharpe ratio, ROI, and more.
+- **Backtesting**: Assess the performance of strategies on historical data.
+- **Risk Management**: Techniques and tools for adjusting strategy parameters.
+
 
 ---
 
@@ -214,7 +215,7 @@ This project is protected under the [MIT License](https://choosealicense.com/lic
 - **[Pandas](https://pandas.pydata.org/)**: For providing the data manipulation tools.
 - **[TensorFlow](https://www.tensorflow.org/)**: For enabling deep learning models.
 - **[Streamlit](https://streamlit.io/)**: For allowing easy deployment of the web application.
-- **[eia.gov](https://www.eia.gov/)**: For providing insights into electricity futures.
+- **[eia.gov](https://www.eia.gov/)**: For providing electricity data.
 
 ---
 
