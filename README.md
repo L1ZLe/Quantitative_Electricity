@@ -30,7 +30,6 @@
 > - [🧩 Modules](#-modules)
 > - [⚙️ Installation](#️-installation)
 > - [🤖 Running Quantative_Electricity](#-running-Quantative_Electricity)
-> - [🧪 Tests](#-tests)
 > - [🛠 Project Roadmap](#-project-roadmap)
 > - [🤝 Contributing](#-contributing)
 > - [📄 License](#-license)
