@@ -10,6 +10,7 @@ from statsmodels.tsa.arima.model import ARIMA
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
+from visualizations import waiting_statement
 
 
 def load_dataset():
@@ -337,6 +338,7 @@ def calculate_metrics(model_name, df):
         # Print metrics and their descriptions in a table
         descriptions = descriptions_classification
     elif (model_name == 'price_ARIMA_model.pkl'):
+        waiting_statement()
         df = df[['Electricity: Wtd Avg Price $/MWh']]
         model = load_models(model_name)
         test_size = int(len(df) * 0.001)
