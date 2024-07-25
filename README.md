@@ -1,3 +1,4 @@
+
 <p align="center">
   <img src="https://cdn-icons-png.flaticon.com/512/6295/6295417.png" width="100" />
 </p>
@@ -5,7 +6,7 @@
     <h1 align="center">QUANTATIVE_ELECTRICITY</h1>
 </p>
 <p align="center">
-    <em><code>► INSERT-TEXT-HERE</code></em>
+    <em><code>► An advanced platform for forecasting electricity prices and developing trading strategies.</code></em>
 </p>
 <p align="center">
 	<img src="https://img.shields.io/github/license/L1ZLe/Quantative_Electricity?style=flat&color=0080ff" alt="license">
@@ -40,13 +41,21 @@
 
 ## 📍 Overview
 
-<code>► INSERT-TEXT-HERE</code>
+<code>► Welcome to the Electricity Trading Strategy Project! This platform provides comprehensive tools and models to forecast electricity prices and develop trading strategies. We utilize advanced machine learning models including SARIMA and GRU to predict price movements and assess trading strategies. Explore live predictions, backtesting tools, and performance metrics to understand and improve trading strategies in the electricity market.</code>
 
 ---
 
 ## 📦 Features
 
-<code>► INSERT-TEXT-HERE</code>
+<code>► Explore a range of features designed to enhance your trading strategy:
+
+- **Model Overview**: Detailed descriptions of the models used for forecasting electricity prices.
+- **Data Exploration**: Interactive visualizations of historical electricity prices and influencing factors.
+- **Predictions**: Live forecasts of next-day electricity prices using various models.
+- **Trading Strategy**: Insights into the logic and implementation of trading strategies.
+- **Performance Metrics**: Evaluation of strategies using metrics like Sharpe ratio, ROI, and more.
+- **Backtesting**: Assess strategy performance on historical data.
+- **Risk Management**: Techniques and tools for adjusting strategy parameters.</code>
 
 ---
 
@@ -100,10 +109,10 @@
 
 | File                                                                                                       | Summary                         |
 | ---                                                                                                        | ---                             |
-| [model_module.py](https://github.com/L1ZLe/Quantative_Electricity/blob/master/model_module.py)             | <code>► INSERT-TEXT-HERE</code> |
-| [visualizations.py](https://github.com/L1ZLe/Quantative_Electricity/blob/master/visualizations.py)         | <code>► INSERT-TEXT-HERE</code> |
-| [trading_strategies.py](https://github.com/L1ZLe/Quantative_Electricity/blob/master/trading_strategies.py) | <code>► INSERT-TEXT-HERE</code> |
-| [app.py](https://github.com/L1ZLe/Quantative_Electricity/blob/master/app.py)                               | <code>► INSERT-TEXT-HERE</code> |
+| [model_module.py](https://github.com/L1ZLe/Quantative_Electricity/blob/master/model_module.py)             | <code>► Contains functions for model training and predictions.</code> |
+| [visualizations.py](https://github.com/L1ZLe/Quantative_Electricity/blob/master/visualizations.py)         | <code>► Generates interactive visualizations for data exploration.</code> |
+| [trading_strategies.py](https://github.com/L1ZLe/Quantative_Electricity/blob/master/trading_strategies.py) | <code>► Implements various trading strategies based on predictions.</code> |
+| [app.py](https://github.com/L1ZLe/Quantative_Electricity/blob/master/app.py)                               | <code>► Main entry point for running the Streamlit application.</code> |
 
 </details>
 
@@ -115,7 +124,7 @@
 
 Ensure you have the following dependencies installed on your system:
 
-* **Python**: `version x.y.z`
+* **Python**: `version 3.x`
 
 ### ⚙️ Installation
 
@@ -142,24 +151,19 @@ pip install -r requirements.txt
 Use the following command to run Quantative_Electricity:
 
 ```sh
-python main.py
+streamlit run app.py
 ```
 
-### 🧪 Tests
-
-To execute tests, run:
-
-```sh
-pytest
-```
 
 ---
 
 ## 🛠 Project Roadmap
 
-- [X] `► INSERT-TASK-1`
-- [ ] `► INSERT-TASK-2`
-- [ ] `► ...`
+- [X] `► Initial setup and model development`
+- [X] `► Implementation of trading strategies`
+- [ ] `► Add advanced risk management techniques`
+- [ ] `► Enhance user interface and visualizations`
+- [ ] `► Deploy and monitor application`
 
 ---
 
@@ -169,7 +173,7 @@ Contributions are welcome! Here are several ways you can contribute:
 
 - **[Submit Pull Requests](https://github.com/L1ZLe/Quantative_Electricity/blob/main/CONTRIBUTING.md)**: Review open PRs, and submit your own PRs.
 - **[Join the Discussions](https://github.com/L1ZLe/Quantative_Electricity/discussions)**: Share your insights, provide feedback, or ask questions.
-- **[Report Issues](https://github.com/L1ZLe/Quantative_Electricity/issues)**: Submit bugs found or log feature requests for Quantative_electricity.
+- **[Report Issues](https://github.com/L1ZLe/Quantative_Electricity/issues)**: Submit bugs found or log feature requests for Quantative_Electricity.
 
 <details closed>
     <summary>Contributing Guidelines</summary>
@@ -202,14 +206,21 @@ Once your PR is reviewed and approved, it will be merged into the main branch.
 
 ## 📄 License
 
-This project is protected under the [SELECT-A-LICENSE](https://choosealicense.com/licenses) License. For more details, refer to the [LICENSE](https://choosealicense.com/licenses/) file.
+This project is protected under the [MIT License](https://choosealicense.com/licenses/mit/). For more details, refer to the [LICENSE](LICENSE) file.
 
 ---
 
 ## 👏 Acknowledgments
 
-- List any resources, contributors, inspiration, etc. here.
+- **[Pandas](
 
-[**Return**](#-quick-links)
+https://pandas.pydata.org/)**: For providing the data manipulation tools.
+- **[TensorFlow](https://www.tensorflow.org/)**: For enabling deep learning models.
+- **[Streamlit](https://streamlit.io/)**: For allowing easy deployment of the web application.
+- **[TradingView](https://www.tradingview.com/)**: For providing insights into electricity futures.
 
 ---
+
+<p align="center">
+  <em>Thank you for exploring Quantative_Electricity. We hope you find it valuable for your trading strategy development!</em>
+</p>
