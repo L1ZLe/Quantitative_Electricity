@@ -28,10 +28,9 @@
 > - [📦 Features](#-features)
 > - [📂 Repository Structure](#-repository-structure)
 > - [🧩 Modules](#-modules)
-> - [🚀 Getting Started](#-getting-started)
->   - [⚙️ Installation](#️-installation)
->   - [🤖 Running Quantative_Electricity](#-running-Quantative_Electricity)
->   - [🧪 Tests](#-tests)
+> - [⚙️ Installation](#️-installation)
+> - [🤖 Running Quantative_Electricity](#-running-Quantative_Electricity)
+> - [🧪 Tests](#-tests)
 > - [🛠 Project Roadmap](#-project-roadmap)
 > - [🤝 Contributing](#-contributing)
 > - [📄 License](#-license)
@@ -64,7 +63,6 @@
 
 ```sh
 └── Quantative_Electricity/
-    ├── Percentile Channel Breakout (Mean Reversion)_backtest_results.xlsx
     ├── README.md
     ├── app.py
     ├── assets
@@ -119,14 +117,6 @@
 
 ---
 
-## 🚀 Getting Started
-
-***Requirements***
-
-Ensure you have the following dependencies installed on your system:
-
-* **Python**: `version 3.x`
-
 ### ⚙️ Installation
 
 1. Clone the Quantative_Electricity repository:
@@ -162,9 +152,8 @@ streamlit run app.py
 
 - [X] `► Initial setup and model development`
 - [X] `► Implementation of trading strategies`
-- [ ] `► Add advanced risk management techniques`
-- [ ] `► Enhance user interface and visualizations`
-- [ ] `► Deploy and monitor application`
+- [X] `► Enhance user interface and visualizations`
+- [X] `► Deploy and monitor application`
 
 ---
 
