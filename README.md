@@ -5,7 +5,9 @@
     <h1 align="center">QUANTITATIVE_ELECTRICITY</h1>
 </p>
 <p align="center">
-    <em><code>► An advanced platform for forecasting electricity prices and developing trading strategies.</code></em>
+    <em><code>► An advanced platform for forecasting electricity prices and developing trading strategies.</code>
+	Link to the web app: (https://quantitative-electricity.streamlit.app/)
+    </em>
 </p>
 <p align="center">
 	<img src="https://img.shields.io/github/license/L1ZLe/Quantitative_Electricity?style=flat&color=0080ff" alt="license">
