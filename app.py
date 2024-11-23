@@ -5,7 +5,7 @@ import plotly.express as px
 from model_module import calculate_metrics, load_models, prepare_input_for_prediction, load_dataset
 from trading_strategies import run_percentile_strategy, run_BOS_strategy,strategy_description
 from visualizations import display_inputs
-
+import scipy.stats as stats
 
 # Model names for price prediction
 models_names_price = {
@@ -263,7 +263,7 @@ def data_exploration():
         st.write("Please select a variable to plot.")
 
 
-    st.write("### Non-Linear Relationships Between Variables")
+    st.write("### Non-Linear Relationships Between Variables (using Scatter plot)")
     # User selects two variables to plot
     variable_x = st.selectbox("Select variable for x-axis", options=types)
     variable_y = st.selectbox("Select variable for y-axis", options=types)
@@ -272,7 +272,7 @@ def data_exploration():
         fig_non_linear, ax_non_linear = plt.subplots()
         sns.regplot(x=variable_x, y=variable_y, data=AllInOne_Data, ax=ax_non_linear, scatter_kws={'s':10}, line_kws={"color":"red"})
         # Enhancements
-        ax_non_linear.set_title(f"Non-Linear Relationship between {variable_x} and {variable_y}")
+        ax_non_linear.set_title(f"Scatter plot with regression line for {variable_x} and {variable_y}")
         ax_non_linear.set_xlabel(variable_x)
         ax_non_linear.set_ylabel(variable_y)
         plt.xticks(rotation=45)
@@ -280,6 +280,26 @@ def data_exploration():
         st.pyplot(fig_non_linear)
     else:
         st.write("Please select variables to plot.")
+    
+
+    st.write("### Distributions")
+    dist_x = st.selectbox("Select variable to plot its distribution", options=types)
+    skewness = AllInOne_Data[dist_x].skew()
+    st.write(f"The Skewness for this variable is: {skewness}")
+    kurtosis = AllInOne_Data[dist_x].kurtosis()
+    st.write(f"The Kurtosis for this variable is: {kurtosis}")
+
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+    # Histogram with KDE
+    sns.histplot(AllInOne_Data[dist_x], kde=True, ax=axes[0])
+    axes[0].set_title(f'Distribution of {dist_x}')
+
+    # Q-Q plot
+    stats.probplot(AllInOne_Data[dist_x], dist="norm", plot=axes[1])
+    axes[1].set_title(f'Q-Q plot of {dist_x}')
+
+    st.pyplot(fig)
 
 def models_overview():
     st.title("Models Overview")
