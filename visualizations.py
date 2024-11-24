@@ -33,8 +33,20 @@ def display_inputs(model_name):
         "price_lstm_model.h5": {"type": "price", "num_inputs": 1},
         "sign_gru_model.keras": {"type": "direction", "num_inputs": 14},
         "sign_LSTM_model.keras": {"type": "direction", "num_inputs": 14},
-        "################": {"type": "direction", "num_inputs": 3, "features": ["Temperature", "Gas Price", "Electricity Load"]},
-        "sign_randomForest_model.pkl": {"type": "direction", "num_inputs": 1, "features": ["Today's Return"]},
+        "################": {"type": "direction", "num_inputs": 14, "features": ['Day', 'Month', 'Year', 'Electricity: Wtd Avg Price $/MWh',
+            'Electricity: Daily Volume MWh',
+            'Natural Gas: Henry Hub Natural Gas Spot Price (Dollars per Million Btu)',
+            'pjm_load sum in MW (daily)', 'temperature mean in C (daily): US',
+            'Weekday', 'return', 'Electricity: Daily Volume MWh % Change',
+            'Natural Gas: Henry Hub Natural Gas Spot Price % Change',
+            'pjm_load sum in MW % Change', 'temperature mean in C % Change']},
+        "sign_randomForest_model.pkl": {"type": "direction", "num_inputs": 14, "features": ['Day', 'Month', 'Year', 'Electricity: Wtd Avg Price $/MWh',
+            'Electricity: Daily Volume MWh',
+            'Natural Gas: Henry Hub Natural Gas Spot Price (Dollars per Million Btu)',
+            'pjm_load sum in MW (daily)', 'temperature mean in C (daily): US',
+            'Weekday', 'return', 'Electricity: Daily Volume MWh % Change',
+            'Natural Gas: Henry Hub Natural Gas Spot Price % Change',
+            'pjm_load sum in MW % Change', 'temperature mean in C % Change']},
         "sign_linearRegression_model.pkl": {"type": "direction", "num_inputs": 1, "features": ["Today's Return"]}
     }
     requirements = models_input_requirements.get(model_name, {})

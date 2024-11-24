@@ -93,7 +93,7 @@ def calculate_metrics(model_name, df):
         # Ensure the length of Ptrain matches the corresponding slice
         train_start = len(df_returns) - len(Ptrain) - test_size
         df_returns.iloc[train_start:train_start+len(Ptrain), df_returns.columns.get_loc('Position')] = (Ptrain > 0)
-        
+
         # Ensure the length of Ptest matches the corresponding slice
         test_start = len(df_returns) - test_size
         df_returns.iloc[test_start:test_start+len(Ptest), df_returns.columns.get_loc('Position')] = (Ptest > 0)
@@ -102,6 +102,7 @@ def calculate_metrics(model_name, df):
         daily_return = df_returns['AlgoReturn'].dropna()
         st.write("Table of Returns: ")
         st.write(df_returns)
+
         metrics = {
             "Training dataset R^2": model.score(X_train, y_train),
             "Testing dataset R^2": model.score(X_test, y_test),
@@ -111,51 +112,87 @@ def calculate_metrics(model_name, df):
             "Testing dataset ROI": df_returns.iloc[test_start:test_start+len(Ptest)]['AlgoReturn'].sum() * 100,
             "Sharpe Ratio": daily_return.mean() / daily_return.std() * np.sqrt(252)
         }
+
         descriptions = descriptions_others
         
     elif(model_name=='sign_randomForest_model.pkl'):
-        df = df[['Electricity: Wtd Avg Price $/MWh']]
-        df_returns = np.log(df).diff()
-        df_returns['target'] = df_returns['Electricity: Wtd Avg Price $/MWh'].shift(-1)
-        df_returns = df_returns.iloc[1:-1]
-
-        test_size = int(len(df_returns) * 0.2)
-        train_data = df_returns.iloc[:-test_size]
-        test_data = df_returns.iloc[-test_size:]
-
-        X_train = train_data['Electricity: Wtd Avg Price $/MWh'].to_numpy().reshape(-1, 1)
-        X_test = test_data['Electricity: Wtd Avg Price $/MWh'].to_numpy().reshape(-1, 1)
-        y_train = train_data['target'].to_numpy()
-        y_test = test_data['target'].to_numpy()
-        Ctrain = (y_train > 0)
-        Ctest = (y_test > 0)
+        
+        df_returns=df[['Trade Date','Electricity: Wtd Avg Price $/MWh','Electricity: Daily Volume MWh','Natural Gas: Henry Hub Natural Gas Spot Price (Dollars per Million Btu)','pjm_load sum in MW (daily)','temperature mean in C (daily): US','Weekday']]
+        # Prepare the data
 
         model = load_models(model_name)
+        df_returns.set_index(['Trade Date'],inplace=True)
+        df_returns.dropna(subset=['Electricity: Wtd Avg Price $/MWh'],inplace=True)
+        df_returns.interpolate(subset=['Natural Gas: Henry Hub Natural Gas Spot Price (Dollars per Million Btu)'],inplace=True)
+        mean_non_zero = df_returns[df_returns['Electricity: Wtd Avg Price $/MWh'] != 0]['Electricity: Wtd Avg Price $/MWh'].mean()
+        df_returns.loc[df_returns['Electricity: Wtd Avg Price $/MWh'] == 0, 'Electricity: Wtd Avg Price $/MWh'] = mean_non_zero
+        df_returns['return']=df_returns["Electricity: Wtd Avg Price $/MWh"].pct_change().dropna()
+        df_returns['target']=df_returns['return'].shift(-1)
+
+        # Calculate percentage change for the features
+        df_returns['Electricity: Daily Volume MWh % Change'] = df_returns['Electricity: Daily Volume MWh'].pct_change()
+        df_returns['Natural Gas: Henry Hub Natural Gas Spot Price % Change'] = df_returns['Natural Gas: Henry Hub Natural Gas Spot Price (Dollars per Million Btu)'].pct_change()
+        df_returns['pjm_load sum in MW % Change'] = df_returns['pjm_load sum in MW (daily)'].pct_change()
+        df_returns['temperature mean in C % Change'] = df_returns['temperature mean in C (daily): US'].pct_change()
+        df_returns.dropna(inplace=True)
+        weekday_mapping = {'Monday': 0, 'Tuesday': 1, 'Wednesday': 2, 'Thursday': 3, 'Friday': 4, 'Saturday': 5, 'Sunday': 6}
+        df_returns['Weekday'] = df_returns['Weekday'].map(weekday_mapping)
+        df_returns['direction']=(df_returns['target']>0)
+
+        X = df_returns.drop(columns=["target", "direction"])
+
+        X.insert(0, "Day", df_returns.index.day)
+        X.insert(1, "Month", df_returns.index.month)
+        X.insert(2, "Year", df_returns.index.year)
+
+        y = df_returns["direction"]
+
+        # Assuming X and y are already defined
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
         Ptrain = model.predict(X_train)
         Ptest = model.predict(X_test)
 
+        # Add a new column 'Position' initialized to 0
         df_returns['Position'] = 0
 
         # Ensure the length of Ptrain matches the corresponding slice
-        train_start = len(df_returns) - len(Ptrain) - test_size
-        df_returns.iloc[train_start:train_start+len(Ptrain), df_returns.columns.get_loc('Position')] = Ptrain
-        
-        # Ensure the length of Ptest matches the corresponding slice
-        test_start = len(df_returns) - test_size
-        df_returns.iloc[test_start:test_start+len(Ptest), df_returns.columns.get_loc('Position')] = Ptest
+        train_indices = X_train.index
+        df_returns.loc[train_indices, 'Position'] = Ptrain
 
+        # Ensure the length of Ptest matches the corresponding slice
+        test_indices = X_test.index
+        df_returns.loc[test_indices, 'Position'] = Ptest
+
+        # Calculate 'AlgoReturn' as the product of 'Position' and 'target'
         df_returns['AlgoReturn'] = df_returns['Position'] * df_returns['target']
+
+        # Calculate daily return and Sharpe ratio
         daily_return = df_returns['AlgoReturn'].dropna()
         sharpe_ratio = daily_return.mean() / daily_return.std() * np.sqrt(252)
+
+        # Calculate R^2 scores and accuracies
+        train_r2 = model.score(X_train, y_train)
+        test_r2 = model.score(X_test, y_test)
+        train_accuracy = np.mean(Ptrain == y_train) * 100
+        test_accuracy = np.mean(Ptest == y_test) * 100
+
+        # Calculate ROI
+        train_start = df_returns.index.get_loc(train_indices[0])
+        test_start = df_returns.index.get_loc(test_indices[0])
+        train_roi = df_returns['AlgoReturn'].iloc[train_start:train_start+len(Ptrain)].sum() * 100
+        test_roi = df_returns['AlgoReturn'].iloc[test_start:test_start+len(Ptest)].sum() * 100
+
         st.write("Table of Returns: ")
-        st.write(df_returns)
+        st.write(df_returns.drop(columns=['direction']))
+        
         metrics = {
-            "Training dataset R^2": model.score(X_train,Ctrain),
-            "Testing dataset R^2": model.score(X_test,Ctest),
-            "Training dataset accuracy": np.mean(Ptrain==Ctrain) * 100,
-            "Testing dataset accuracy": np.mean(Ptest==Ctest) * 100,
-            "Training dataset ROI": df_returns.iloc[train_start:train_start+len(Ptrain)]['AlgoReturn'].sum() * 100,
-            "Testing dataset ROI": df_returns.iloc[test_start:test_start+len(Ptest)]['AlgoReturn'].sum() * 100,
+            "Training dataset R^2": train_r2,
+            "Testing dataset R^2": test_r2,
+            "Training dataset accuracy": train_accuracy,
+            "Testing dataset accuracy": test_accuracy,
+            "Training dataset ROI": train_roi,
+            "Testing dataset ROI": test_roi,
             "Sharpe Ratio": sharpe_ratio
         }
         descriptions = descriptions_others
@@ -251,7 +288,7 @@ def calculate_metrics(model_name, df):
     elif(model_name == 'sign_LSTM_model.keras'):
         model = load_models(model_name)
 
-        df['Returns'] = df['Electricity: Wtd Avg Price $/MWh'].pct_change()
+        df['Returns'] = df['Electricity: Wtd Avg Price $/MWh'].pct_change().shift(-1).fillna(0)
         df.dropna(inplace=True)
 
         # Set sequence length
@@ -413,7 +450,6 @@ def calculate_metrics(model_name, df):
         # Set seed for reproducibility
         tf.random.set_seed(7)
 
-        # Assuming df is your DataFrame
         # Split into train and test sets
         train_size = int(len(df) * 0.8)
         train, test = df[:train_size], df[train_size:]
@@ -423,13 +459,13 @@ def calculate_metrics(model_name, df):
         train = scaler.fit_transform(train)
         test = scaler.transform(test)
 
-
-
         # Define sequence length
         seq_length = 14
         X_test, y_test = create_sequences(test,test, seq_length)
+
         # Make predictions
         y_pred = model.predict(X_test)
+
         # Flatten the arrays and ensure they have the same length
         X_test_flat = X_test.flatten()
         y_test_flat = y_test.flatten()

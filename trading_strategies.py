@@ -247,9 +247,9 @@ def strategy_description(strategy):
             "```"
         ),
         "sign_randomForest_model.pkl": (
-            "Uses a Random Forest model to predict future returns based on historical prices. The model predicts continuous return values, which are then used to set trading positions. Positive predictions lead to long positions, while negative predictions lead to short positions. The strategy aims to leverage complex patterns in the data for better prediction accuracy.\n"
+            "Uses a Random Forest model to predict future returns based on various factors. The model predicts continuous return values, which are then used to set trading positions. Positive predictions lead to long positions. The strategy aims to leverage complex patterns in the data for better prediction accuracy.\n"
             "Parameters required:\n"
-            "- Price data (historical prices).\n"
+            "- ['Day', 'Month', 'Year', 'Electricity: Wtd Avg Price $/MWh', 'Electricity: Daily Volume MWh', 'Natural Gas: Henry Hub Natural Gas Spot Price (Dollars per Million Btu)', 'pjm_load sum in MW (daily)', 'temperature mean in C (daily): US', 'Weekday', 'return', 'Electricity: Daily Volume MWh % Change', 'Natural Gas: Henry Hub Natural Gas Spot Price % Change', 'pjm_load sum in MW % Change', 'temperature mean in C % Change']\n"
             "\nExample Code:\n"
             "```python\n"
             "import pandas as pd\n"
