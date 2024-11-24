@@ -384,6 +384,7 @@ def calculate_metrics(model_name, df):
         # Prepare the data
         model = load_models(model_name)
         df_returns = df[['Trade Date', 'Electricity: Wtd Avg Price $/MWh', 'Electricity: Daily Volume MWh', 'Natural Gas: Henry Hub Natural Gas Spot Price (Dollars per Million Btu)', 'pjm_load sum in MW (daily)', 'temperature mean in C (daily): US', 'Weekday']]
+        df_returns['Trade Date'] = pd.to_datetime(df_returns['Trade Date'])
         df_returns.set_index(['Trade Date'], inplace=True)
         df_returns.dropna(subset=['Electricity: Wtd Avg Price $/MWh'], inplace=True)
         df_returns.interpolate(subset=['Natural Gas: Henry Hub Natural Gas Spot Price (Dollars per Million Btu)'], inplace=True)
@@ -421,17 +422,17 @@ def calculate_metrics(model_name, df):
         # Reorder columns to match the expected feature list
         X = df_returns[expected_feature_list]
 
-        y = df_returns["target"].dropna()
+        y = df_returns["target"]
 
         # Ensure X and y have the same length
         X = X.loc[y.index]
-
+        
         # Assuming X and y are already defined
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
         predictions = model.predict(X_test)
 
-        analyze_predictions(X_test['return'], y_test.values, predictions)
+        analyze_predictions(X_test['return'].shift(-1).fillna(0), predictions)
 
         # Collect all metrics
         metrics = {
@@ -466,12 +467,13 @@ def calculate_metrics(model_name, df):
             
             # Update training data with the new observed value
             train_data = pd.concat([train_data, test_data.iloc[t:t+1]])
-
+        predictions_returns = (predictions - test_data.squeeze().shift(1).fillna(train_data['Electricity: Wtd Avg Price $/MWh'].iloc[-test_size-1]) )/ test_data.squeeze().shift(1).fillna(train_data['Electricity: Wtd Avg Price $/MWh'].iloc[-test_size-1])
+        actual_returns = (test_data.squeeze().fillna(0) - test_data.squeeze().shift(1).fillna(train_data['Electricity: Wtd Avg Price $/MWh'].iloc[-test_size-1]) )/ test_data.squeeze().shift(1).fillna(train_data['Electricity: Wtd Avg Price $/MWh'].iloc[-test_size-1])
+        
         
         analyze_predictions(
-            test_data.squeeze().shift(1).fillna(train_data['Electricity: Wtd Avg Price $/MWh'].iloc[-test_size-1]),
-            test_data.squeeze().fillna(0),
-            predictions
+            actual_returns[1:],
+            predictions_returns[1:]
         )
         # Collect all metrics
         metrics = {
@@ -503,7 +505,7 @@ def calculate_metrics(model_name, df):
         predictions = model.predict(X_test)
         
         
-        analyze_predictions(X_test.flatten(), y_test.flatten(), predictions.flatten())
+        analyze_predictions(np.append(np.roll(X_test, -1)[:-1], 0).flatten(), predictions.flatten())
         # Collect all metrics
         metrics = {
             "Mean Absolute Error": mean_absolute_error(y_test, predictions),
@@ -544,7 +546,7 @@ def calculate_metrics(model_name, df):
         y_pred_flat = y_pred_flat[:min_length]
 
         # Call the analyze_predictions function
-        analyze_predictions(X_test_flat, y_test_flat, y_pred_flat)
+        analyze_predictions(np.append(np.roll(X_test_flat, -1)[:-1], 0).flatten(), y_pred_flat)
         metrics = {
             "Mean Absolute Error": mean_absolute_error(y_test, y_pred),
             "Root Mean Squared Error": np.sqrt(mean_squared_error(y_test, y_pred)),
@@ -601,58 +603,26 @@ def prepare_input_for_prediction(inputs, model_file):
         
         return new_entry, None
 
-def analyze_predictions(X_test, y_test, predictions):
-    # Convert test_data to a Series (1-dimensional) before creating the DataFrame
+def analyze_predictions(y_test, predictions):
     data = pd.DataFrame({
-        'X_test': X_test,
-        'y_test': y_test,
-        'predictions': predictions
+        'Actual': y_test,
+        'Predicted': predictions
     })
-    data['position'] = 0
+
+    WinRate = (np.sign(data['Predicted']) == np.sign(data['Actual'])).mean()     
     
-    for i in range(len(data)):
-        if data['X_test'].iloc[i] < data['predictions'].iloc[i]:
-            data['position'].iloc[i] = 1
-        elif data['X_test'].iloc[i] > data['predictions'].iloc[i]:
-            data['position'].iloc[i] = -1
-        else:
-            data['position'].iloc[i] = 0
+    data['position'] = np.where(np.sign(data['Predicted'])>0,1,-1)
 
-    # Initialize the 'returns' and 'correct' columns
-    data['returns'] = None
-    data['correct'] = None
-
-    # Main loop to calculate 'correct' values
-    for i in range(len(data)):
-        row_index = data.index[i]  # Get the actual index label for the current row
-
-        if data['position'][row_index] == 1:  # Long position
-            if data['X_test'][row_index] < data['y_test'][row_index]:  # Market went up
-                if data['y_test'][row_index] > data['predictions'][row_index]:
-                    data.at[row_index, 'correct'] = 1  # Prediction lower than actual
-                else:
-                    data.at[row_index, 'correct'] = 0  # Prediction higher than actual
-            else:
-                data.at[row_index, 'correct'] = -1  # Market went down, wrong position
-
-        elif data['position'][row_index] == -1:  # Short position
-            if data['X_test'][row_index] > data['y_test'][row_index]:  # Market went down
-                if data['y_test'][row_index] < data['predictions'][row_index]:
-                    data.at[row_index, 'correct'] = 1  # Prediction higher than actual
-                else:
-                    data.at[row_index, 'correct'] = 0  # Prediction lower than actual
-            else:
-                data.at[row_index, 'correct'] = -1  # Market went up, wrong position
-
-    # Iterate over the actual index of the DataFrame for returns calculation
-    for index in data.index:
-        if data.loc[index, 'correct'] == 1:
-            data.loc[index, 'returns'] = abs((data.loc[index, 'predictions'] - data.loc[index, 'X_test']) / data.loc[index, 'X_test'])
-        elif data.loc[index, 'correct'] == 0:
-            data.loc[index, 'returns'] = abs((data.loc[index, 'y_test'] - data.loc[index, 'X_test']) / data.loc[index, 'X_test'])
-        elif data.loc[index, 'correct'] == -1:
-            data.loc[index, 'returns'] = abs((data.loc[index, 'y_test'] - data.loc[index, 'X_test']) / data.loc[index, 'X_test']) * (-1)
-    st.write(data)
+    
+    data['ROI'] = np.where(
+        np.sign(data['Predicted']) == np.sign(data['Actual']),
+        np.where(np.abs(data['Predicted']) < np.abs(data['Actual']), data['Predicted'], data['Actual']),
+        data['Actual']
+    ) * data['position']
     # Streamlit output
-    st.write(f'The Win rate is: {len(data[data["correct"].isin([1,0])])/int(len(data))*100:.2f}%')
-    st.write(f'The ROI is: {data["returns"].sum()*100:.2f}%')
+    st.write(data)
+    st.write(f'The Win rate is: {WinRate*100:.2f}%')
+    st.write(f'The ROI is: {data["ROI"].sum()*100:.2f}%')
+    st.write("""The ROI represents the return when a trading position is closed, either upon meeting the predicted target or at the end of the day. A positive ROI reflects a profit aligned with the position, while a negative ROI indicates a loss due to the market moving against it. Capturing realistic gains or losses based on prediction accuracy and trade timing.""")
+    
+    
