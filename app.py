@@ -568,7 +568,7 @@ X = data[['feature1', 'feature2', 'feature3']]
 y = data['price']
 
 # Split the data
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
 
 # Create the model
 model = RandomForestRegressor(n_estimators=100, random_state=42)
@@ -629,9 +629,10 @@ def predictions():
     if prediction_type:
         if prediction_type == "Price":
             models_names = {
-                "ARIMA": "price_ARIMA_model.pkl",
                 "GRU": "price_gru_model.h5",
-                "LSTM": "price_lstm_model.h5"
+                "LSTM": "price_lstm_model.h5",
+                "Random Forest": "price_randomForest_model.pkl",
+                "ARIMA": "price_ARIMA_model.pkl"
             }
         elif prediction_type == "Direction":
             models_names = {
@@ -669,32 +670,36 @@ def predictions():
                       prediction = forecast[0]
                       lower_bound, upper_bound = conf_int[0]
                       
-                      st.write("The predicted price for the next day is: ${:.2f}".format(prediction))
-                      st.write("95% confidence interval: ${:.2f} and ${:.2f}".format(lower_bound, upper_bound))
+                      st.write("The predicted price for the next day is: ${:.5f}".format(prediction))
+                      st.write("95% confidence interval: ${:.5f} and ${:.5f}".format(lower_bound, upper_bound))
                     elif model_file == "price_gru_model.h5" or model_file == "price_lstm_model.h5":
                       inputs, scaler = prepare_input_for_prediction(inputs, model_file)
 
                       predicted_price_scaled = model.predict(inputs)
                       prediction = scaler.inverse_transform(predicted_price_scaled)
 
-                      # # Assuming a normal distribution to estimate confidence intervals
-                      # mean_prediction = prediction.mean()
-                      # std_prediction = prediction.std()
-                      # lower_bound = mean_prediction - 1.96 * std_prediction
-                      # upper_bound = mean_prediction + 1.96 * std_prediction
-
                       predicted_value = prediction[0].item()
-                      st.write(f"The predicted price for the next day is: ${predicted_value:.2f}")
-                      #st.write(f"95% confidence interval: ${lower_bound:.2f} - ${upper_bound:.2f}")
+                      st.write(f"The predicted price for the next day is: ${predicted_value:.5f}")
+                      #st.write(f"95% confidence interval: ${lower_bound:.5f} - ${upper_bound:.5f}")
+                    
+                    elif model_file == "price_randomForest_model.pkl":
+                      inputs, scaler = prepare_input_for_prediction(inputs, model_file)
+
+                      predicted_return= model.predict(inputs)
+                      #prediction = scaler.inverse_transform(predicted_return)
+                      
+                      predicted_value = predicted_return[0].item() * 100
+                      st.write(f"The predicted return of electricity price is: {predicted_value:.5f}%")
+
                     else:
                       prediction = model.predict(inputs)[0]
                       
                       if prediction_type == "Price":
                           if model_name == "ARIMA":
-                              st.write("The predicted price for the next day is: ${:.2f}".format(prediction))
+                              st.write("The predicted price for the next day is: ${:.5f}".format(prediction))
                           else:
                               predicted_value = prediction[0].item()
-                              st.write(f"The predicted price for the next day is: ${predicted_value:.2f}")
+                              st.write(f"The predicted price for the next day is: ${predicted_value:.5f}")
                       elif prediction_type == "Direction":
                           direction = "up" if prediction > 0 else "down"
                           st.write(f"The predicted direction for the next day is: {direction}")

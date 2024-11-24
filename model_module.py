@@ -595,6 +595,11 @@ def prepare_input_for_prediction(inputs, model_file):
         X_test = AllInOne_Data['Electricity: Wtd Avg Price $/MWh'].values.flatten()
         
         return X_test, None
+    elif model_file == "price_randomForest_model.pkl":
+        
+        new_entry = pd.DataFrame(inputs)
+        
+        return new_entry, None
 
 def analyze_predictions(X_test, y_test, predictions):
     # Convert test_data to a Series (1-dimensional) before creating the DataFrame
