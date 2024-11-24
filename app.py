@@ -600,7 +600,7 @@ def model_selection():
         strategy_description(model_name)
         st.write(f"Metrics for {selected_direction_model}:")
         metrics, descriptions = calculate_metrics(model_name, AllInOne_Data)
-        st.write(pd.DataFrame({'Metric': descriptions.keys(), 'Description': descriptions.values()}))
+        st.write(pd.DataFrame({'Metric': descriptions.keys(), 'Description': descriptions.values()}).set_index('Metric'))
         st.write(metrics)
 
     st.title("Model Selection for price Prediction")
@@ -613,9 +613,9 @@ def model_selection():
     if selected_price_model and selected_price_model != "Select a model":
         model_name = models_names_price[selected_price_model]
         strategy_description(model_name)
-        metrics,descriptions = calculate_metrics(model_name, AllInOne_Data)
         st.write(f"Metrics for {selected_price_model}:")
-        st.write(pd.DataFrame({'Metric': descriptions.keys(), 'Description': descriptions.values()}))
+        metrics,descriptions = calculate_metrics(model_name, AllInOne_Data)
+        st.write(pd.DataFrame({'Metric': descriptions.keys(), 'Description': descriptions.values()}).set_index('Metric'))
         st.write(metrics)
 
 def predictions():
