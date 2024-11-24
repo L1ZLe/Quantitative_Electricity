@@ -624,5 +624,14 @@ def analyze_predictions(y_test, predictions):
     st.write(f'The Win rate is: {WinRate*100:.2f}%')
     st.write(f'The ROI is: {data["ROI"].sum()*100:.2f}%')
     st.write("""The ROI represents the return when a trading position is closed, either upon meeting the predicted target or at the end of the day. A positive ROI reflects a profit aligned with the position, while a negative ROI indicates a loss due to the market moving against it. Capturing realistic gains or losses based on prediction accuracy and trade timing.""")
+    # Plot histogram of ROI
+    plt.figure(figsize=(10, 6))
+    plt.hist(data[data['ROI'] >= 0]['ROI'], bins=100, label='Positive ROI', color='green')
+    plt.hist(data[data['ROI'] < 0]['ROI'], bins=100, label='Negative ROI', color='orange')
+    plt.title('Histogram of ROI')
+    plt.xlabel('ROI')
+    plt.ylabel('Frequency')
+    plt.legend()
     
+    st.pyplot(plt)
     
