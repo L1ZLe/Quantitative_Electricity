@@ -182,9 +182,12 @@ def calculate_metrics(model_name, df):
         test_start = df_returns.index.get_loc(test_indices[0])
         train_roi = df_returns['AlgoReturn'].iloc[train_start:train_start+len(Ptrain)].sum() * 100
         test_roi = df_returns['AlgoReturn'].iloc[test_start:test_start+len(Ptest)].sum() * 100
-
+        
+        st.write(f"The weekday mapping is: {weekday_mapping}")
         st.write("Table of Returns: ")
         st.write(df_returns.drop(columns=['direction']))
+        st.write("Each Feature Importance:")
+        st.image(r'assets/Feature importance RF_CLASSIFIER.png')
         
         metrics = {
             "Training dataset R^2": train_r2,
