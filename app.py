@@ -12,7 +12,8 @@ models_names_price = {
     "Select a model": "",
     "ARIMA": "price_ARIMA_model.pkl",
     "GRU": "price_gru_model.h5",
-    "LSTM": "price_lstm_model.h5"
+    "LSTM": "price_lstm_model.h5",
+    "Random Forest": "price_randomForest_model.pkl"
 }
 
 # Model names for direction prediction

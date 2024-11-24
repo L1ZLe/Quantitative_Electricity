@@ -377,6 +377,70 @@ def calculate_metrics(model_name, df):
         }
         # Print metrics and their descriptions in a table
         descriptions = descriptions_classification
+    elif (model_name == 'price_randomForest_model.pkl'):
+        waiting_statement()
+        # Prepare the data
+        
+        # Prepare the data
+        model = load_models(model_name)
+        df_returns = df[['Trade Date', 'Electricity: Wtd Avg Price $/MWh', 'Electricity: Daily Volume MWh', 'Natural Gas: Henry Hub Natural Gas Spot Price (Dollars per Million Btu)', 'pjm_load sum in MW (daily)', 'temperature mean in C (daily): US', 'Weekday']]
+        df_returns.set_index(['Trade Date'], inplace=True)
+        df_returns.dropna(subset=['Electricity: Wtd Avg Price $/MWh'], inplace=True)
+        df_returns.interpolate(subset=['Natural Gas: Henry Hub Natural Gas Spot Price (Dollars per Million Btu)'], inplace=True)
+        mean_non_zero = df_returns[df_returns['Electricity: Wtd Avg Price $/MWh'] != 0]['Electricity: Wtd Avg Price $/MWh'].mean()
+        df_returns.loc[df_returns['Electricity: Wtd Avg Price $/MWh'] == 0, 'Electricity: Wtd Avg Price $/MWh'] = mean_non_zero
+        df_returns['return'] = df_returns["Electricity: Wtd Avg Price $/MWh"].pct_change()
+        df_returns['target'] = df_returns['return'].shift(-1)
+
+        # Calculate percentage change for the features
+        df_returns['Electricity: Daily Volume MWh % Change'] = df_returns['Electricity: Daily Volume MWh'].pct_change()
+        df_returns['Natural Gas: Henry Hub Natural Gas Spot Price % Change'] = df_returns['Natural Gas: Henry Hub Natural Gas Spot Price (Dollars per Million Btu)'].pct_change()
+        df_returns['pjm_load sum in MW % Change'] = df_returns['pjm_load sum in MW (daily)'].pct_change()
+        df_returns['temperature mean in C % Change'] = df_returns['temperature mean in C (daily): US'].pct_change()
+        df_returns.dropna(inplace=True)
+
+        # One-hot encode the 'Weekday' column
+        df_returns = pd.get_dummies(df_returns, columns=['Weekday'])
+
+        # Drop rows where 'Weekday_Friday' or 'Weekday_Saturday' are true
+        df_returns = df_returns[~((df_returns['Weekday_Friday'] == 1) | (df_returns['Weekday_Saturday'] == 1))]
+
+        # Drop the 'Weekday_Friday' and 'Weekday_Saturday' columns
+        df_returns.drop(columns=['Weekday_Friday', 'Weekday_Saturday'], inplace=True)
+
+        df_returns['direction'] = (df_returns['target'] > 0)
+
+        # Reorder columns to match the expected feature list
+        expected_feature_list = ['Day', 'Month', 'Year', 'Electricity: Wtd Avg Price $/MWh', 'Electricity: Daily Volume MWh', 'Natural Gas: Henry Hub Natural Gas Spot Price (Dollars per Million Btu)', 'pjm_load sum in MW (daily)', 'temperature mean in C (daily): US', 'Weekday_Monday', 'Weekday_Sunday', 'Weekday_Thursday', 'Weekday_Tuesday', 'Weekday_Wednesday', 'return', 'Electricity: Daily Volume MWh % Change', 'Natural Gas: Henry Hub Natural Gas Spot Price % Change', 'pjm_load sum in MW % Change', 'temperature mean in C % Change']
+
+        # Insert date-related columns
+        df_returns.insert(0, "Day", df_returns.index.day)
+        df_returns.insert(1, "Month", df_returns.index.month)
+        df_returns.insert(2, "Year", df_returns.index.year)
+
+        # Reorder columns to match the expected feature list
+        X = df_returns[expected_feature_list]
+
+        y = df_returns["target"].dropna()
+
+        # Ensure X and y have the same length
+        X = X.loc[y.index]
+
+        # Assuming X and y are already defined
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+        predictions = model.predict(X_test)
+
+        analyze_predictions(X_test['return'], y_test.values, predictions)
+
+        # Collect all metrics
+        metrics = {
+            "Mean Absolute Error": mean_absolute_error(y_test, predictions),
+            "Root Mean Squared Error": np.sqrt(mean_squared_error(y_test, predictions)),
+            "Mean Squared Error": mean_squared_error(y_test, predictions)
+        }
+        descriptions = descriptions_RMSE_MAE_MSE
+
     elif (model_name == 'price_ARIMA_model.pkl'):
         waiting_statement()
         df = df[['Electricity: Wtd Avg Price $/MWh']]
