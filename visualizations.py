@@ -8,7 +8,8 @@ def waiting_statement():
 def final_balance_plotting(starting_amount, total_roi, data, start_idx, end_idx):
     final_balance = starting_amount * (1 + total_roi)
     
-    st.write(f"Final balance starting with ${starting_amount} and buying/selling 1 MWh of electricity: ${final_balance:.2f}")
+    st.write(f"Final balance starting with \${starting_amount} and buying/selling 1 MWh of electricity: \${final_balance:.2f}")
+    
     st.write(f"Total ROI: {total_roi*100:.2f}%")
 
     st.write("Price Plot with Position Indicator (Zoomed In):")

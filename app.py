@@ -721,7 +721,7 @@ def backtesting():
         backtest_results = run_percentile_strategy(starting_amount, AllInOne_Data)
         
     elif selected_strategy == "Break of Structure":
-        st.image("assets\BOS.png")
+        st.image(r"assets/BOS.png")
         backtest_results = run_BOS_strategy(starting_amount, AllInOne_Data)
         
     if backtest_results is not None:
